@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Roshni Rai ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; overflow-x:hidden;
+  font-family:Georgia,serif; color:white; text-align:center;
+  background:linear-gradient(-45deg,#26001f,#7a174d,#c94f7c,#32124f);
+  background-size:400% 400%; animation:bg 14s ease infinite;
+}
+@keyframes bg{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+#welcome{
+  position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at center,#6e164c,#160016 70%);
+  transition:opacity 1.3s;
+}
+.welcome-box{max-width:650px;padding:35px}
+.welcome-box h1{font-size:48px;margin:15px 0}
+.welcome-box p{font-size:20px;line-height:1.7}
+button{
+  border:0;border-radius:30px;padding:15px 28px;font-size:18px;
+  cursor:pointer;background:white;color:#a32665;box-shadow:0 8px 25px #0007;
+}
+button:hover{transform:scale(1.06)}
+.container{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:35px}
+.card{
+  width:min(92%,760px);padding:38px;border-radius:30px;
+  background:#ffffff18;backdrop-filter:blur(14px);
+  border:1px solid #ffffff44;box-shadow:0 20px 60px #0008;
+}
+.heart{font-size:70px;animation:beat 1.2s infinite}
+@keyframes beat{50%{transform:scale(1.2)}}
+h1{font-size:44px;margin:10px}
+h2{font-size:28px}
+p{font-size:19px;line-height:1.8}
+.photo{
+  width:min(90%,520px); max-height:520px; object-fit:cover;
+  border-radius:24px; border:4px solid white; box-shadow:0 12px 35px #0008;
+  margin:20px 0;
+}
+.music{
+  margin:20px auto;padding:12px 18px;border-radius:18px;background:#ffffff18;
+  border:1px solid #ffffff33; max-width:520px;
+}
+.small{font-size:14px;opacity:.85}
+.heart-float{position:fixed;bottom:-40px;pointer-events:none;animation:up linear forwards}
+@keyframes up{to{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div id="welcome">
+  <div class="welcome-box">
+    <div style="font-size:72px">❤️</div>
+    <h1>A Little Surprise</h1>
+    <p>For the person who makes ordinary moments feel special.</p>
+    <button onclick="startSurprise()">Open My Heart ❤️</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="heart">❤️</div>
+    <h1>For Roshni Rai</h1>
+
+    <img src="roshni_photo.jpg" class="photo" alt="A special memory">
+
+    <div class="music">
+      <button id="musicBtn" onclick="toggleMusic()">🎵 Play My Melody</button>
+      <div class="small">An original, Nepali-inspired instrumental melody created for this page.</div>
+    </div>
+
+    <p>
+      Roshni, some memories are simple photographs,
+      but the people in those photographs are what make them precious.
+    </p>
+
+    <p>
+      I wanted to make this little page because one picture
+      can hold a whole story — a moment, a smile, and a memory
+      I will always treasure.
+    </p>
+
+    <h2>Thank you for being part of my story. ❤️</h2>
+
+    <p>
+      May we create many more beautiful memories together.
+    </p>
+
+    <p><i>— With love, always ❤️</i></p>
+  </div>
+</div>
+
+<script>
+let audioCtx, master, timer, playing=false, step=0;
+
+// Original melody: a gentle Nepali-inspired pentatonic-style tune.
+// It is newly generated in the browser; no copyrighted recording is included.
+const notes = [
+  261.63,293.66,329.63,392.00,440.00,
+  392.00,329.63,293.66,261.63,
+  329.63,392.00,440.00,523.25,440.00,
+  392.00,329.63,293.66
+];
+
+function tone(freq, duration, when, volume=0.055){
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.type="sine";
+  osc.frequency.value=freq;
+  gain.gain.setValueAtTime(0.0001,when);
+  gain.gain.exponentialRampToValueAtTime(volume,when+0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001,when+duration);
+  osc.connect(gain); gain.connect(master);
+  osc.start(when); osc.stop(when+duration+0.03);
+}
+
+function playStep(){
+  if(!playing) return;
+  const now=audioCtx.currentTime;
+  tone(notes[step % notes.length],0.62,now,0.065);
+  // gentle lower accompaniment every few notes
+  if(step % 4 === 0) tone(notes[(step+8)%notes.length]/2,1.0,now,0.025);
+  step++;
+}
+
+function toggleMusic(){
+  if(!audioCtx){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    master=audioCtx.createGain(); master.gain.value=0.8; master.connect(audioCtx.destination);
+  }
+  if(playing){
+    playing=false; clearInterval(timer);
+    document.getElementById("musicBtn").textContent="🎵 Play My Melody";
+  }else{
+    audioCtx.resume(); playing=true; step=0; playStep();
+    timer=setInterval(playStep,650);
+    document.getElementById("musicBtn").textContent="⏸ Pause Melody";
+  }
+}
+
+function startSurprise(){
+  const w=document.getElementById("welcome");
+  w.style.opacity="0";
+  setTimeout(()=>w.style.display="none",1300);
+  // Browsers require a user gesture for audio; the melody button remains available.
+}
+
+function heart(){
+  const h=document.createElement("div");
+  h.className="heart-float";
+  h.textContent=["❤️","💖","💕","💗","✨"][Math.floor(Math.random()*5)];
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(16+Math.random()*25)+"px";
+  h.style.animationDuration=(5+Math.random()*5)+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),10000);
+}
+setInterval(heart,550);
+</script>
+</body>
+</html>
